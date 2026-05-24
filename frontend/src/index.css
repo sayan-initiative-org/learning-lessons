@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Custom font utilities used by hyde_interactive.jsx */
+@layer utilities {
+  .font-display {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .font-sans {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}

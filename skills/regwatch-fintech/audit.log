@@ -1,0 +1,3 @@
+# regwatch-fintech audit log
+# Format (one line per event, append-only):
+# <ISO8601 timestamp> | <stage> | <sources> | <items_found> | <user_decision> | <notes>

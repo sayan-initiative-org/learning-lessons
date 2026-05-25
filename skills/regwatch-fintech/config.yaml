@@ -1,0 +1,45 @@
+# regwatch-fintech — runtime configuration
+#
+# Replace all <PLACEHOLDER> values before first real run.
+
+# MCP server that exposes product documentation (used in Stage 4 — Impact Analysis).
+# The skill will call ListMcpResourcesTool with this server name, then ReadMcpResourceTool
+# for matching resources.
+mcp:
+  server_name: <PLACEHOLDER — e.g. claude_ai_ProductDocs>
+  resource_prefix: <PLACEHOLDER — e.g. docs:// or empty>
+  # Optional keyword-to-resource hints. Improves match quality before full retrieval.
+  hints:
+    # "<reg keyword>": ["<resource glob>", "<resource glob>"]
+    # e.g. "kyc": ["docs://onboarding/*", "docs://compliance/kyc/*"]
+
+# Jurisdictions in scope for this engagement. The scanner uses these to filter sources.
+# Values are ISO country codes or recognised supranational tags (EU, GLOBAL).
+jurisdictions:
+  - <PLACEHOLDER — e.g. IN>
+  - <PLACEHOLDER — e.g. US>
+  - <PLACEHOLDER — e.g. EU>
+
+# Default product surfaces — the canonical list of product areas the impact matrix maps to.
+# Used when MCP returns no match, so the user can still tag the obligation manually.
+product_surfaces:
+  - <PLACEHOLDER — e.g. onboarding/kyc>
+  - <PLACEHOLDER — e.g. payments/upi>
+  - <PLACEHOLDER — e.g. lending/underwriting>
+  - <PLACEHOLDER — e.g. wallet/transactions>
+
+# Priority keywords — items in scan results matching these get auto-flagged as high priority.
+priority_keywords:
+  - <PLACEHOLDER — e.g. customer due diligence>
+  - <PLACEHOLDER — e.g. transaction monitoring>
+  - <PLACEHOLDER — e.g. data localisation>
+  - <PLACEHOLDER — e.g. consent>
+
+# Plan-generation defaults.
+plan:
+  # Buffer (in days) subtracted from effective date to set internal deadline.
+  internal_deadline_buffer_days: <PLACEHOLDER — e.g. 30>
+  # Default effort sizes available to the planner.
+  effort_sizes: [XS, S, M, L, XL]
+  # Default severity ladder.
+  severities: [Low, Medium, High, Critical]

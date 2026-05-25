@@ -1,0 +1,39 @@
+# regwatch-fintech — allowlisted regulatory sources
+#
+# HARD RULE: the skill will ONLY fetch URLs whose host matches an entry below.
+# Outbound links to other hosts will not be followed.
+#
+# To add a source:
+#   1. Add an entry with name, base_url, host, domain, jurisdiction, index_path.
+#   2. The `host` field is the exact hostname checked against URLs (no scheme, no path).
+#   3. `index_path` is the listing/notifications page the scanner walks during Stage 2.
+#   4. `domain` is one of: banking, payments, aml, securities, conduct, data-protection, crypto, insurance, lending.
+#
+# Replace all <PLACEHOLDER> entries before first real run.
+
+sources:
+  - name: <PLACEHOLDER — e.g. RBI India>
+    host: <PLACEHOLDER — e.g. rbi.org.in>
+    base_url: <PLACEHOLDER — e.g. https://rbi.org.in>
+    index_path: <PLACEHOLDER — e.g. /Scripts/NotificationUser.aspx>
+    domain: <PLACEHOLDER — e.g. banking>
+    jurisdiction: <PLACEHOLDER — e.g. IN>
+    priority_keywords: [<PLACEHOLDER>, <PLACEHOLDER>]   # e.g. ["KYC", "CDD", "PMLA"]
+
+  - name: <PLACEHOLDER — e.g. SEBI>
+    host: <PLACEHOLDER>
+    base_url: <PLACEHOLDER>
+    index_path: <PLACEHOLDER>
+    domain: <PLACEHOLDER>
+    jurisdiction: <PLACEHOLDER>
+    priority_keywords: []
+
+  - name: <PLACEHOLDER — e.g. FinCEN>
+    host: <PLACEHOLDER>
+    base_url: <PLACEHOLDER>
+    index_path: <PLACEHOLDER>
+    domain: <PLACEHOLDER>
+    jurisdiction: <PLACEHOLDER>
+    priority_keywords: []
+
+  # Add more sources by copying the block above.

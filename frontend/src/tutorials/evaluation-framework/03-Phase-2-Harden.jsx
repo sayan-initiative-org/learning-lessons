@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+// Warm-dark editorial palette. Phase 2 signature = gold.
 const T = {
-  bg:       "#0A0E1A",
-  s1:       "#0E1424",
-  card:     "#131B2E",
-  border:   "#1E2940",
-  text:     "#E8EEF8",
-  dim:      "#7A8BAD",
-  muted:    "#3A4A6A",
-  bright:   "#A8B9D8",
+  bg:       "#0d0d0f",
+  s1:       "#0a0a0c",
+  card:     "#15151a",
+  border:   "#26262c",
+  text:     "#f0ebe1",
+  dim:      "#8a857c",
+  muted:    "#5c5a55",
+  bright:   "#c8c3b8",
 
-  phase:    "#FBBF24",    // amber — Phase 2 signature
-  phaseDim: "#FBBF2412",
-  phaseMid: "#FBBF2435",
-  red:      "#F87171",
-  green:    "#34D399",
-  blue:     "#60A5FA",
-  violet:   "#A78BFA",
+  phase:    "#d4a64a",    // gold — Phase 2 signature
+  phaseDim: "#d4a64a12",
+  phaseMid: "#d4a64a35",
+  red:      "#a85544",
+  green:    "#7a9966",
+  blue:     "#6b8aa8",
+  violet:   "#9b7bbf",
 };
 
 const TABS = [
@@ -250,17 +251,29 @@ export default function Phase2() {
   const [expandedDec, setExpandedDec] = useState(0);
 
   return (
-    <div style={{ background: T.bg, minHeight: "100vh", fontFamily: "'Inter', system-ui, sans-serif", color: T.text }}>
+    <div style={{ background: T.bg, minHeight: "100vh", fontFamily: "'Geist', system-ui, sans-serif", color: T.text, letterSpacing: "-0.005em" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: ${T.muted}; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 3px; }
+        ::selection { background: ${T.phase}; color: ${T.bg}; }
         .tab-b { cursor: pointer; border: none; background: transparent; transition: all 0.15s; }
         .tab-b:hover { color: ${T.text} !important; }
         .hov { transition: all 0.15s; cursor: pointer; }
         .hov:hover { border-color: ${T.bright} !important; }
         code { font-family: 'JetBrains Mono', monospace; }
+        h1, h2, h3 {
+          font-family: 'Fraunces', serif;
+          font-weight: 400;
+          font-optical-sizing: auto;
+          font-variation-settings: "opsz" 96;
+          letter-spacing: -0.03em;
+        }
+        h1 { font-variation-settings: "opsz" 144; letter-spacing: -0.04em; }
+        h4, h5, h6 { font-family: 'Geist', system-ui, sans-serif; }
+        em { color: ${T.phase}; font-style: italic; }
+        strong { color: ${T.phase}; font-weight: 500; }
       `}</style>
 
       {/* Breadcrumb */}

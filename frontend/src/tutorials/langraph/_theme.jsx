@@ -63,19 +63,30 @@ export const GlobalStyles = () => (
 
     .h-eyebrow { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
                  color: ${T.terra}; margin-bottom: 10px; font-weight: 500; }
-    .h1 { font-family: 'Fraunces', serif; font-size: 44px; line-height: 1.02; letter-spacing: -0.04em;
+    .h1 { font-family: 'Fraunces', serif; font-size: 56px; line-height: 1; letter-spacing: -0.04em;
           font-weight: 400; font-variation-settings: "opsz" 144; margin: 0 0 8px; }
-    .h2 { font-family: 'Fraunces', serif; font-size: 30px; line-height: 1.05; letter-spacing: -0.03em;
+    .h2 { font-family: 'Fraunces', serif; font-size: 38px; line-height: 1.05; letter-spacing: -0.03em;
           font-weight: 400; font-variation-settings: "opsz" 96; margin: 0 0 8px; }
-    .h3 { font-family: 'Fraunces', serif; font-size: 20px; line-height: 1.2; letter-spacing: -0.02em;
+    .h3 { font-family: 'Fraunces', serif; font-size: 24px; line-height: 1.2; letter-spacing: -0.02em;
           font-weight: 500; font-variation-settings: "opsz" 36; margin: 1.6rem 0 .55rem; }
-    .h4 { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    .h4 { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
           color: ${T.text}; font-weight: 600; }
 
+    .prose p { line-height: 1.75; color: ${T.text}; opacity: .92; font-size: 15px; margin: 14px 0; }
+    .prose strong { color: ${T.gold}; font-weight: 500; }
+    .prose em { color: ${T.terra}; font-style: italic; }
+    .prose code { font-family: 'JetBrains Mono', monospace; font-size: 13px;
+                  background: ${T.ink}; padding: 1px 6px; border-radius: 3px;
+                  color: ${T.sage}; border: 1px solid ${T.border}; }
+    .prose ul { margin: 12px 0; padding-left: 0; list-style: none; }
+    .prose li { padding: 5px 0 5px 22px; position: relative; line-height: 1.7;
+                color: ${T.text}; opacity: .9; font-size: 15px; }
+    .prose li::before { content: "→"; position: absolute; left: 0; color: ${T.gold}; }
+
     .card { background: ${T.bgPanel}; border: 1px solid ${T.border}; border-radius: 4px;
-            padding: 20px; transition: border-color .2s; }
+            padding: 22px; transition: border-color .2s; }
     .card:hover { border-color: ${T.borderHi}; }
-    .card-flat { background: ${T.bgSunken}; border: 1px solid ${T.border}; border-radius: 4px; padding: 16px; }
+    .card-flat { background: ${T.bgSunken}; border: 1px solid ${T.border}; border-radius: 4px; padding: 18px; }
 
     .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; font-size: 11px;
             letter-spacing: 0.05em; border: 1px solid ${T.border}; border-radius: 999px;
@@ -140,10 +151,10 @@ export const GlobalStyles = () => (
     .scroll-hide::-webkit-scrollbar { width: 6px; height: 6px; }
     .scroll-hide::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 3px; }
 
-    .tab-btn { padding: 9px 0; font-size: 13px; color: ${T.textMute};
+    .tab-btn { padding: 8px 14px; font-size: 13px; color: ${T.textMute};
                border-bottom: 1px solid transparent; cursor: pointer; transition: all .15s;
-               background: none; border-radius: 0; letter-spacing: 0.04em;
-               margin-right: 24px; font-family: inherit; }
+               background: none; border-radius: 0; letter-spacing: 0.02em;
+               margin-right: 4px; font-family: inherit; }
     .tab-btn:hover { color: ${T.text}; }
     .tab-btn.active { color: ${T.gold}; border-bottom-color: ${T.gold}; }
 

@@ -1,29 +1,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { GlobalStyles, T as TT } from "./_theme";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DESIGN TOKENS
+// DESIGN TOKENS — remapped to warm-dark editorial palette (matches
+// MlEngineerTransformation + standalone langraph modules). Legacy keys
+// (bg2/bg3/bg4/blue/purple/teal/amber/coral/green/muted/dim) are kept as
+// aliases so the section components below render in the new palette without
+// rewriting every inline style.
 // ─────────────────────────────────────────────────────────────────────────────
 const T = {
-  bg:      "#090C14",
-  bg2:     "#0F1321",
-  bg3:     "#151A2A",
-  bg4:     "#1C2235",
-  border:  "rgba(255,255,255,0.07)",
-  border2: "rgba(255,255,255,0.13)",
-  blue:    "#5B8BF5",
-  purple:  "#9B6DFF",
-  teal:    "#2DD4BF",
-  amber:   "#F5A623",
-  coral:   "#F87171",
-  green:   "#34D399",
-  text:    "#E2E8F0",
-  muted:   "#64748B",
-  dim:     "#2E3A50",
+  bg:      TT.bg,
+  bg2:     TT.bgSunken,
+  bg3:     TT.bgPanel,
+  bg4:     TT.ink,
+  border:  TT.border,
+  border2: TT.borderHi,
+  blue:    TT.steel,
+  purple:  TT.plum,
+  teal:    TT.sage,
+  amber:   TT.gold,
+  coral:   TT.rust,
+  green:   TT.sage,
+  text:    TT.text,
+  muted:   TT.textMute,
+  dim:     TT.textDim,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SHARED COMPONENTS
+// SHARED COMPONENTS — thin wrappers around the shared _theme classes so the
+// hub picks up the same look as the standalone modules.
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CodeBlock({ file, lang = "python", children }) {
@@ -34,74 +40,67 @@ function CodeBlock({ file, lang = "python", children }) {
     setTimeout(() => setCopied(false), 1800);
   };
   return (
-    <div style={{ margin: "1rem 0", borderRadius: 10, overflow: "hidden", border: `1px solid ${T.border}` }}>
-      <div style={{ background: "#111827", padding: "6px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${T.border}` }}>
-        <span style={{ fontSize: 11, fontFamily: "monospace", color: T.muted }}>{file}</span>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <span style={{ fontSize: 10, color: T.blue, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>{lang}</span>
-          <button onClick={handleCopy} style={{ background: copied ? "rgba(45,212,191,0.12)" : "rgba(255,255,255,0.05)", border: `1px solid ${T.border}`, borderRadius: 5, padding: "2px 10px", fontSize: 10, color: copied ? T.teal : T.muted, cursor: "pointer", fontFamily: "monospace", transition: "all 0.2s" }}>
+    <div className="codeblock">
+      <div className="codeblock-header">
+        <span>{file || lang}</span>
+        <span className="codeblock-actions mono">
+          <span style={{ color: T.dim }}>{lang}</span>
+          <button className="codeblock-copy mono" onClick={handleCopy} aria-label="Copy code">
             {copied ? "✓ copied" : "copy"}
           </button>
-        </div>
+        </span>
       </div>
-      <pre style={{ margin: 0, padding: "1rem 1.25rem", background: "#0D1117", overflowX: "auto", fontSize: 12.5, lineHeight: 1.78, fontFamily: "'Fira Code', 'JetBrains Mono', monospace", color: "#ABB2BF", whiteSpace: "pre" }}>
-        {children}
-      </pre>
+      <pre className="scroll-hide">{children}</pre>
     </div>
   );
 }
 
 function Callout({ type = "insight", title, children }) {
-  const styles = {
-    insight: { bg: "rgba(91,139,245,0.07)",  border: T.blue,   text: "#A5BFFC", icon: "💡" },
-    tip:     { bg: "rgba(45,212,191,0.07)",  border: T.teal,   text: "#6EE7D8", icon: "✅" },
-    warn:    { bg: "rgba(245,166,35,0.07)",  border: T.amber,  text: "#FDE68A", icon: "⚠️" },
-    danger:  { bg: "rgba(248,113,113,0.07)", border: T.coral,  text: "#FCA5A5", icon: "🚨" },
-    pattern: { bg: "rgba(155,109,255,0.07)", border: T.purple, text: "#C4B5FD", icon: "🏗️" },
-  };
-  const s = styles[type] || styles.insight;
+  // Map legacy types onto the shared callout palette.
+  const map = { insight: "info", tip: "tip", warn: "warn", danger: "danger", pattern: "pattern" };
+  const cls = `callout callout-${map[type] || "info"}`;
   return (
-    <div style={{ background: s.bg, borderLeft: `3px solid ${s.border}`, borderRadius: "0 8px 8px 0", padding: "0.85rem 1.1rem", margin: "1rem 0", fontSize: 13.5, color: s.text, lineHeight: 1.7 }}>
-      {title && <div style={{ fontWeight: 600, marginBottom: 4 }}>{s.icon} {title}</div>}
-      {children}
+    <div className={cls}>
+      {title && <div className="callout-title">{title}</div>}
+      <div>{children}</div>
     </div>
   );
 }
 
-function SectionHeader({ num, title, subtitle, color = T.blue }) {
+function SectionHeader({ num, title, subtitle, color = T.amber }) {
   return (
-    <div style={{ marginBottom: "1.8rem", paddingBottom: "1.2rem", borderBottom: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 10, fontFamily: "monospace", color, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>
-        SECTION {String(num).padStart(2, "0")} / 13
+    <div style={{ marginBottom: 28, paddingBottom: 20, borderBottom: `1px solid ${T.border}` }}>
+      <div className="mono" style={{ fontSize: 10.5, color, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: 8 }}>
+        Section {String(num).padStart(2, "0")} / 13
       </div>
-      <h2 style={{ fontSize: "1.6rem", fontWeight: 700, color: T.text, margin: "0 0 8px", lineHeight: 1.2 }}>{title}</h2>
-      {subtitle && <p style={{ fontSize: 13.5, color: T.muted, margin: 0 }}>{subtitle}</p>}
+      <h2 className="display h2" style={{ color: T.text }}>{title}</h2>
+      {subtitle && <p style={{ fontSize: 14, color: T.muted, lineHeight: 1.65, marginTop: 4, maxWidth: 720 }}>{subtitle}</p>}
     </div>
   );
 }
 
-function Grid({ cols = 3, children, gap = 12 }) {
+function Grid({ cols = 3, children, gap = 14 }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap, margin: "1rem 0" }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap, margin: "1rem 0" }}>
       {children}
     </div>
   );
 }
 
-function Card({ title, subtitle, accent = T.blue, icon, children }) {
+function Card({ title, subtitle, accent = T.amber, icon, children }) {
   return (
-    <div style={{ background: T.bg3, border: `1px solid ${T.border}`, borderRadius: 10, padding: "1rem 1.1rem", borderTop: `2px solid ${accent}` }}>
+    <div className="card" style={{ borderTop: `2px solid ${accent}` }}>
       {icon && <div style={{ fontSize: 20, marginBottom: 6 }}>{icon}</div>}
-      {title && <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 4 }}>{title}</div>}
-      {subtitle && <div style={{ fontSize: 12.5, color: T.muted, lineHeight: 1.6 }}>{subtitle}</div>}
+      {title && <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 500, color: T.text, marginBottom: 4 }}>{title}</div>}
+      {subtitle && <div style={{ fontSize: 13, color: T.muted, lineHeight: 1.6 }}>{subtitle}</div>}
       {children}
     </div>
   );
 }
 
-function Badge({ color = T.blue, children }) {
+function Badge({ color = T.amber, children }) {
   return (
-    <span style={{ display: "inline-block", background: `${color}18`, border: `1px solid ${color}40`, color, borderRadius: 20, padding: "2px 10px", fontSize: 11, fontWeight: 600, letterSpacing: "0.04em" }}>
+    <span className="pill mono" style={{ color, borderColor: `${color}55`, background: `${color}10` }}>
       {children}
     </span>
   );
@@ -109,28 +108,30 @@ function Badge({ color = T.blue, children }) {
 
 function DataTable({ headers, rows }) {
   return (
-    <div style={{ overflowX: "auto", margin: "1rem 0" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-        <thead>
-          <tr>{headers.map((h, i) => <th key={i} style={{ background: T.bg4, padding: "8px 12px", textAlign: "left", fontSize: 11, fontWeight: 600, color: T.muted, textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: `1px solid ${T.border2}` }}>{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
-              {row.map((cell, j) => <td key={j} style={{ padding: "8px 12px", color: j === 0 ? T.text : T.muted, fontFamily: j === 0 ? "monospace" : "inherit", fontSize: j === 0 ? 12 : 13 }}>{cell}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <table className="compare">
+      <thead>
+        <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i}>
+            {row.map((cell, j) => (
+              <td key={j} className={j === 0 ? "mono" : undefined}>{cell}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
 function H3({ children, tag }) {
   return (
-    <h3 style={{ fontSize: "1rem", fontWeight: 600, color: T.text, margin: "1.5rem 0 0.5rem", display: "flex", alignItems: "center", gap: 8 }}>
-      {children}
-      {tag && <span style={{ fontSize: 10, fontWeight: 700, color: T.teal, background: "rgba(45,212,191,0.1)", border: "1px solid rgba(45,212,191,0.2)", padding: "2px 8px", borderRadius: 12, letterSpacing: "0.04em", fontFamily: "monospace" }}>{tag}</span>}
+    <h3 className="h3" style={{ color: T.text, display: "flex", alignItems: "center", gap: 10 }}>
+      <span>{children}</span>
+      {tag && (
+        <span className="mono pill" style={{ fontSize: 10, color: T.amber, borderColor: `${T.amber}55`, background: `${T.amber}10` }}>{tag}</span>
+      )}
     </h3>
   );
 }
@@ -1757,79 +1758,149 @@ export default function LangGraphGuide() {
     s.label.toLowerCase().includes(search.toLowerCase())
   );
 
+  const activeIdx = SECTIONS.findIndex(s => s.id === active);
+  const prev = activeIdx > 0 ? SECTIONS[activeIdx - 1] : null;
+  const next = activeIdx < SECTIONS.length - 1 ? SECTIONS[activeIdx + 1] : null;
+
   return (
-    <div style={{ display: "flex", height: "100vh", background: T.bg, color: T.text, fontFamily: "'Segoe UI', 'SF Pro Display', system-ui, sans-serif", overflow: "hidden" }}>
+    <div className="lg-root" style={{ minHeight: "100vh" }}>
+      <GlobalStyles />
 
-      {/* ── SIDEBAR ─────────────────────────────────────────────── */}
-      {sideOpen && (
-        <div style={{ width: 220, flexShrink: 0, background: T.bg2, borderRight: `1px solid ${T.border}`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          {/* Logo */}
-          <div style={{ padding: "1rem 1rem 0.75rem", borderBottom: `1px solid ${T.border}` }}>
-            <div style={{ fontSize: 10, color: T.muted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>LangGraph</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Complete Guide</div>
-            <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>13 sections · Agentic AI</div>
-          </div>
-          {/* Search */}
-          <div style={{ padding: "0.6rem 0.75rem", borderBottom: `1px solid ${T.border}` }}>
-            <input
-              value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search sections..."
-              style={{ width: "100%", background: T.bg3, border: `1px solid ${T.border}`, borderRadius: 6, padding: "5px 10px", fontSize: 12, color: T.text, outline: "none", fontFamily: "inherit" }}
-            />
-          </div>
-          {/* Nav */}
-          <nav style={{ flex: 1, overflowY: "auto", padding: "0.5rem 0" }}>
-            {filtered.map(s => (
-              <button key={s.id} onClick={() => setActive(s.id)} style={{ width: "100%", textAlign: "left", padding: "7px 12px", background: active === s.id ? `${s.color}14` : "transparent", borderLeft: `2px solid ${active === s.id ? s.color : "transparent"}`, border: "none", borderLeft: `2px solid ${active === s.id ? s.color : "transparent"}`, color: active === s.id ? s.color : T.muted, fontSize: 12.5, cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s", display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 10, fontFamily: "monospace", color: active === s.id ? s.color : T.dim, fontWeight: 600 }}>
-                  {String(SECTIONS.findIndex(x => x.id === s.id) + 1).padStart(2, "0")}
-                </span>
-                {s.label}
-              </button>
-            ))}
-          </nav>
-          {/* Footer */}
-          <div style={{ padding: "0.75rem 1rem", borderTop: `1px solid ${T.border}`, fontSize: 10, color: T.dim }}>
-            <Link to="/" style={{ color: T.muted, textDecoration: "none", display: "block", marginBottom: 6 }}>← All tutorials</Link>
-            Pregel · StateGraph · LangChain
-          </div>
-        </div>
-      )}
+      <div style={{ display: "grid", gridTemplateColumns: sideOpen ? "240px 1fr" : "1fr", minHeight: "100vh" }}>
 
-      {/* ── MAIN CONTENT ────────────────────────────────────────── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {/* Topbar */}
-        <div style={{ background: T.bg2, borderBottom: `1px solid ${T.border}`, padding: "0.6rem 1.25rem", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-          <button onClick={() => setSide(v => !v)} style={{ background: "transparent", border: `1px solid ${T.border}`, borderRadius: 6, padding: "4px 10px", color: T.muted, cursor: "pointer", fontSize: 12 }}>
-            {sideOpen ? "◀" : "▶"}
-          </button>
-          <span style={{ fontSize: 11, color: T.muted }}>LangGraph Guide</span>
-          <span style={{ color: T.dim }}>›</span>
-          <span style={{ fontSize: 12, color: current.color, fontWeight: 500 }}>{current.label}</span>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-            {SECTIONS.map(s => (
-              <button key={s.id} onClick={() => setActive(s.id)} title={s.label} style={{ width: 8, height: 8, borderRadius: "50%", background: active === s.id ? s.color : T.dim, border: "none", cursor: "pointer", transition: "all 0.15s" }} />
-            ))}
-          </div>
-        </div>
+        {/* ── SIDEBAR ─────────────────────────────────────────────── */}
+        {sideOpen && (
+          <aside
+            className="scroll-hide"
+            style={{
+              background: T.bg2, borderRight: `1px solid ${T.border}`,
+              padding: "28px 0", position: "sticky", top: 0, height: "100vh",
+              overflowY: "auto", display: "flex", flexDirection: "column",
+            }}
+          >
+            <div style={{ padding: "0 18px 16px" }}>
+              <div className="mono" style={{ color: TT.terra, fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase" }}>LangGraph</div>
+              <div className="display" style={{ color: T.text, fontSize: 20, marginTop: 6, lineHeight: 1.15 }}>
+                Complete<br/><em style={{ color: TT.gold, fontStyle: "italic" }}>field guide</em>
+              </div>
+              <div style={{ fontSize: 11, color: T.muted, marginTop: 6, letterSpacing: "0.02em" }}>13 sections · Agentic AI</div>
+            </div>
+            <div className="hairline" />
 
-        {/* Content */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "2rem 2.5rem", maxWidth: 860 }}>
-          <Component key={active} />
-          {/* Prev / Next */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2.5rem", paddingTop: "1.5rem", borderTop: `1px solid ${T.border}` }}>
-            {SECTIONS.findIndex(s => s.id === active) > 0 ? (
-              <button onClick={() => setActive(SECTIONS[SECTIONS.findIndex(s => s.id === active) - 1].id)} style={{ background: T.bg3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "8px 18px", color: T.muted, cursor: "pointer", fontSize: 13, fontFamily: "inherit" }}>
-                ← {SECTIONS[SECTIONS.findIndex(s => s.id === active) - 1].label}
-              </button>
-            ) : <div />}
-            {SECTIONS.findIndex(s => s.id === active) < SECTIONS.length - 1 ? (
-              <button onClick={() => setActive(SECTIONS[SECTIONS.findIndex(s => s.id === active) + 1].id)} style={{ background: `${current.color}15`, border: `1px solid ${current.color}40`, borderRadius: 8, padding: "8px 18px", color: current.color, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500 }}>
-                {SECTIONS[SECTIONS.findIndex(s => s.id === active) + 1].label} →
-              </button>
-            ) : <div />}
+            <div style={{ padding: "12px 14px 8px" }}>
+              <input
+                value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Search sections…"
+                style={{
+                  width: "100%", background: TT.bgSunken, border: `1px solid ${T.border}`,
+                  borderRadius: 4, padding: "6px 10px", fontSize: 12, color: T.text,
+                  outline: "none", fontFamily: "inherit",
+                }}
+              />
+            </div>
+
+            <nav style={{ flex: 1, overflowY: "auto" }}>
+              {filtered.map(s => {
+                const idx = SECTIONS.findIndex(x => x.id === s.id);
+                const isActive = active === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setActive(s.id)}
+                    className={`nav-link ${isActive ? "active" : ""}`}
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    <span className="mono" style={{ fontSize: 10, color: isActive ? TT.gold : TT.textDim, letterSpacing: "0.08em" }}>
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <span>{s.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div style={{ padding: "18px", marginTop: 12, fontSize: 10, color: T.dim, fontFamily: "JetBrains Mono", letterSpacing: ".05em", borderTop: `1px solid ${T.border}` }}>
+              <Link to="/" style={{ color: T.muted, textDecoration: "none", display: "block", marginBottom: 8 }}>← All tutorials</Link>
+              Pregel · StateGraph · LangChain
+            </div>
+          </aside>
+        )}
+
+        {/* ── MAIN ───────────────────────────────────────────────── */}
+        <main style={{ overflowY: "auto", height: "100vh", display: "flex", flexDirection: "column" }} className="scroll-hide">
+          {/* Topbar */}
+          <div style={{
+            background: T.bg2, borderBottom: `1px solid ${T.border}`,
+            padding: "12px 28px", display: "flex", alignItems: "center", gap: 14,
+            flexShrink: 0, position: "sticky", top: 0, zIndex: 10,
+          }}>
+            <button
+              onClick={() => setSide(v => !v)}
+              className="mono"
+              style={{
+                background: "transparent", border: `1px solid ${T.border}`, borderRadius: 3,
+                padding: "4px 10px", color: T.muted, cursor: "pointer", fontSize: 11,
+              }}
+              aria-label="Toggle sidebar"
+            >
+              {sideOpen ? "◀" : "▶"}
+            </button>
+            <span className="mono" style={{ fontSize: 10, color: T.muted, letterSpacing: "0.12em", textTransform: "uppercase" }}>LangGraph Guide</span>
+            <span style={{ color: T.dim }}>›</span>
+            <span style={{ fontSize: 12.5, color: current.color, fontWeight: 500, letterSpacing: "0.01em" }}>{current.label}</span>
+            <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+              {SECTIONS.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setActive(s.id)}
+                  title={s.label}
+                  style={{
+                    width: 7, height: 7, borderRadius: "50%",
+                    background: active === s.id ? s.color : TT.borderHi,
+                    border: "none", cursor: "pointer", transition: "all 0.15s", padding: 0,
+                  }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+
+          {/* Content column — matches ML Engineer width + padding */}
+          <div style={{ maxWidth: 920, width: "100%", margin: "0 auto", padding: "60px 56px 120px" }}>
+            <div className="anim-fade" key={active}>
+              <Component />
+            </div>
+
+            {/* Prev / Next */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 56, paddingTop: 24, borderTop: `1px solid ${T.border}`, gap: 12 }}>
+              {prev ? (
+                <button
+                  onClick={() => setActive(prev.id)}
+                  style={{
+                    background: T.bg3, border: `1px solid ${T.border}`, borderRadius: 3,
+                    padding: "10px 18px", color: T.muted, cursor: "pointer",
+                    fontSize: 13, fontFamily: "inherit", textAlign: "left",
+                  }}
+                >
+                  <div className="mono" style={{ fontSize: 10, color: TT.textDim, letterSpacing: "0.12em", marginBottom: 2 }}>← PREV</div>
+                  {prev.label}
+                </button>
+              ) : <div />}
+              {next ? (
+                <button
+                  onClick={() => setActive(next.id)}
+                  style={{
+                    background: `${current.color}10`, border: `1px solid ${current.color}55`, borderRadius: 3,
+                    padding: "10px 18px", color: current.color, cursor: "pointer",
+                    fontSize: 13, fontFamily: "inherit", fontWeight: 500, textAlign: "right",
+                  }}
+                >
+                  <div className="mono" style={{ fontSize: 10, color: TT.textDim, letterSpacing: "0.12em", marginBottom: 2 }}>NEXT →</div>
+                  {next.label}
+                </button>
+              ) : <div />}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );

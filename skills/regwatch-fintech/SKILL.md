@@ -60,15 +60,17 @@ Ambiguous? Ask one ≤150-token question: "Watching for reg changes, or tracing 
 
 Each step ends at a gate. Never advance on silence.
 
-### 1 — Pick the requirement
-- If a **user story**: list candidate stories from the `provides: [stories]` MCP server(s) — titles + ids only, filtered by `story_filter`. **Gate:** user picks which stories. Only then `ReadMcpResourceTool` the picked ones.
+### 1 — Pick the requirement (orchestrator owns all MCP access)
+- If a **user story**: list candidate stories from the `provides: [stories]` MCP server(s) — titles + ids only, filtered by `story_filter`. **Gate:** user picks which stories. Only then `ReadMcpResourceTool` the picked ones. **Distil each picked story to a concise summary** — id, title, 1–2-line summary, acceptance intent — quoting the operative line only. Never pass raw ticket bodies, comments, or history downstream.
 - If a **reg obligation**: it arrives from `sub-regwatch` (chained mode) — skip the MCP story fetch.
+
+The sub-agent never calls MCP. All `ListMcpResourcesTool` / `ReadMcpResourceTool` calls happen here, and only the distilled summary crosses the handoff.
 
 ### 2 — Optional supporting docs
 - If the story references behaviour we can't infer, list candidate docs from `provides: [docs]` MCP (use `hints` to narrow). **Gate:** user picks 0–2 docs. Read only those. If none needed, skip — don't fetch "just in case".
 
 ### 3 — Hand to `sub-codebase-impact`
-Pass: the chosen requirement (summary + acceptance intent), the declared code roots, and any picked docs. The sub-agent greps inside declared roots, surfaces candidate files, and **gates again** before reading file bodies. It returns a **Code Impact Report** (`templates/code-impact-report.md`): frontend impact, backend impact, DB-change verdict (yes/no + why), open questions.
+Pass: the **distilled summary** from step 1 (id, title, summary, acceptance intent — never the raw ticket), the declared code roots, and any picked docs. The sub-agent greps inside declared roots, surfaces candidate files, and **gates again** before reading file bodies. It returns a **Code Impact Report** (`templates/code-impact-report.md`): frontend impact, backend impact, DB-change verdict (yes/no + why), open questions.
 
 ### 4 — Spec file (consent-gated)
 **Gate:** "Write this up as a spec file? (y/n)". On yes, render `templates/spec-file.md` to `specs/<YYYY-MM-DD>-<slug>.md`. On no, stop after the report.

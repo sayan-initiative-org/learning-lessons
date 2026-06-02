@@ -1,45 +1,100 @@
 # regwatch-fintech — runtime configuration
 #
 # Replace all <PLACEHOLDER> values before first real run.
+# The skill reads this file once per run and asks (via AskUserQuestion) to fill any
+# remaining <PLACEHOLDER>. Nothing is fetched or pushed to the LLM without a gate.
 
-# MCP server that exposes product documentation (used in Stage 4 — Impact Analysis).
-# The skill will call ListMcpResourcesTool with this server name, then ReadMcpResourceTool
-# for matching resources.
-mcp:
-  server_name: <PLACEHOLDER — e.g. claude_ai_ProductDocs>
-  resource_prefix: <PLACEHOLDER — e.g. docs:// or empty>
-  # Optional keyword-to-resource hints. Improves match quality before full retrieval.
-  hints:
-    # "<reg keyword>": ["<resource glob>", "<resource glob>"]
-    # e.g. "kyc": ["docs://onboarding/*", "docs://compliance/kyc/*"]
+# -----------------------------------------------------------------------------
+# MCP servers (multiple allowed).
+# Each entry is one MCP server the skill may query. Declare what each exposes so
+# the orchestrator knows where to look for user stories vs. documentation.
+# The skill calls ListMcpResourcesTool with `server_name`, then ReadMcpResourceTool
+# ONLY for resources the user picks at a gate. Never bulk-read.
+# -----------------------------------------------------------------------------
+mcp_servers:
+  - server_name: <PLACEHOLDER — e.g. claude_ai_Jira>
+    provides: [stories]          # one or more of: stories, docs
+    resource_prefix: <PLACEHOLDER — e.g. jira:// or empty>
+    # Optional: narrow the resource list so we never page the whole backlog.
+    story_filter: <PLACEHOLDER — e.g. project=PAY AND sprint=active, or empty>
 
-# Jurisdictions in scope for this engagement. The scanner uses these to filter sources.
-# Values are ISO country codes or recognised supranational tags (EU, GLOBAL).
+  - server_name: <PLACEHOLDER — e.g. claude_ai_Confluence>
+    provides: [docs]
+    resource_prefix: <PLACEHOLDER — e.g. confluence:// or empty>
+    # Optional keyword→resource hints. Improves match quality before retrieval,
+    # so we read 1–2 targeted docs instead of scanning a space.
+    hints:
+      # "<keyword>": ["<resource glob>", "<resource glob>"]
+      # e.g. "kyc": ["confluence://onboarding/*", "confluence://compliance/kyc/*"]
+
+# -----------------------------------------------------------------------------
+# Codebase roots — used by the codebase-impact sub-agent.
+# Detection is config-declared, NOT auto-inferred: the sub-agent only greps inside
+# these globs. This keeps scans deterministic and token-cheap. Leave a list empty
+# to tell the sub-agent that layer does not exist in this repo.
+# -----------------------------------------------------------------------------
+code:
+  repo_root: <PLACEHOLDER — e.g. /Users/you/Projects/payments-app>
+  frontend_paths:
+    - <PLACEHOLDER — e.g. apps/web/src/**>
+  backend_paths:
+    - <PLACEHOLDER — e.g. services/api/app/**>
+  db_paths:
+    # Migrations, schema, ORM models — where a DB change would actually land.
+    - <PLACEHOLDER — e.g. services/api/migrations/**>
+    - <PLACEHOLDER — e.g. services/api/app/models/**>
+  # Globs the sub-agent must never read (secrets, vendored code, build output).
+  ignore:
+    - "**/node_modules/**"
+    - "**/.env*"
+    - "**/dist/**"
+    - "**/build/**"
+
+# -----------------------------------------------------------------------------
+# Jurisdictions in scope (used by the regwatch sub-agent to filter sources).
+# ISO country codes or supranational tags (EU, GLOBAL).
+# -----------------------------------------------------------------------------
 jurisdictions:
   - <PLACEHOLDER — e.g. IN>
   - <PLACEHOLDER — e.g. US>
   - <PLACEHOLDER — e.g. EU>
 
-# Default product surfaces — the canonical list of product areas the impact matrix maps to.
-# Used when MCP returns no match, so the user can still tag the obligation manually.
+# Default product surfaces — canonical product areas the impact matrix maps to,
+# used when MCP returns no doc/story match so the user can still tag manually.
 product_surfaces:
   - <PLACEHOLDER — e.g. onboarding/kyc>
   - <PLACEHOLDER — e.g. payments/upi>
   - <PLACEHOLDER — e.g. lending/underwriting>
-  - <PLACEHOLDER — e.g. wallet/transactions>
 
-# Priority keywords — items in scan results matching these get auto-flagged as high priority.
+# Priority keywords — scan/story items matching these get auto-flagged high priority.
 priority_keywords:
   - <PLACEHOLDER — e.g. customer due diligence>
-  - <PLACEHOLDER — e.g. transaction monitoring>
-  - <PLACEHOLDER — e.g. data localisation>
   - <PLACEHOLDER — e.g. consent>
+  - <PLACEHOLDER — e.g. data localisation>
 
 # Plan-generation defaults.
 plan:
-  # Buffer (in days) subtracted from effective date to set internal deadline.
   internal_deadline_buffer_days: <PLACEHOLDER — e.g. 30>
-  # Default effort sizes available to the planner.
   effort_sizes: [XS, S, M, L, XL]
-  # Default severity ladder.
   severities: [Low, Medium, High, Critical]
+
+# -----------------------------------------------------------------------------
+# GitHub Copilot credit consumption (as of 2026-06-02).
+# Credit = (tokens / 1,000,000) × rate, per token class. The skill reports credits
+# for the ACTIVE model only, in the CONSOLE only — never written into any artifact.
+# Rates are per 1M tokens. Update `rates_verified_on` whenever GitHub changes them.
+#   total_credit = input_credit + output_credit + cached_credit
+# Claude rates below are the user-supplied values; fill GPT-5.4-mini before using it.
+# -----------------------------------------------------------------------------
+copilot_billing:
+  active_model: <PLACEHOLDER — claude-sonnet-4-6 | gpt-5-4-mini>
+  rates_verified_on: 2026-06-02
+  models:
+    claude-sonnet-4-6:
+      input_per_1m: 300
+      output_per_1m: 1500
+      cached_per_1m: 50
+    gpt-5-4-mini:
+      input_per_1m: <PLACEHOLDER — credits per 1M input tokens>
+      output_per_1m: <PLACEHOLDER — credits per 1M output tokens>
+      cached_per_1m: <PLACEHOLDER — credits per 1M cached tokens>

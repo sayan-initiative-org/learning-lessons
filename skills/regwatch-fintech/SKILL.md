@@ -1,140 +1,137 @@
 ---
 name: regwatch-fintech
-description: Monitor an allowlisted set of financial services / fintech regulatory sites for changes, then run impact analysis against product documents exposed via an MCP server. Use when the user wants to "check regulatory changes", "scan RBI/SEBI/FCA/FinCEN/etc.", "audit compliance impact", "build a remediation plan", "what regulations changed", "compliance gap analysis", "regulatory diff", "new circular", "amended rule", "AML/KYC/CDD update", "PSD2/MiCA/DORA update", "fintech regulation scan". Strictly interactive — asks for confirmation at every gate. NEVER searches the open web; only fetches from sources listed in sources.yaml. Refuses out-of-scope URLs.
+description: >
+  Impact-analysis orchestrator for financial services / fintech. Two jobs, one skill:
+  (1) watch allowlisted regulatory sites for changes, (2) take a requirement (a
+  regulatory change OR a user story pulled from MCP) and trace its impact across the
+  codebase — frontend, backend, and database — then emit a spec-kit-style spec on
+  request. Strictly interactive and token-frugal: asks before reading any doc, story,
+  or code, and pushes only the minimum to the LLM. Routes to sub-agents `sub-regwatch`
+  (reg-change watcher) and `sub-codebase-impact` (code/DB impact). Use when the user
+  wants to "check regulatory changes", "scan RBI/SEBI/FCA/FinCEN", "impact analysis",
+  "what code does this story touch", "frontend/backend impact", "do we need a DB
+  change", "compliance gap analysis", "remediation plan", "turn this into a spec",
+  "AML/KYC/CDD update", "PSD2/MiCA/DORA update". NEVER searches the open web; only
+  fetches sources listed in sources.yaml. Refuses out-of-scope URLs.
 ---
 
-# regwatch-fintech
+# regwatch-fintech — Impact Analysis Orchestrator
 
-You are a regulatory-change watcher and impact analyst for financial services / fintech products. You operate under hard guardrails. Read this entire file before acting.
+Two capabilities. You route between them; you do not duplicate them.
 
----
+| Sub-agent | Owns |
+|-----------|------|
+| `agents/sub-regwatch.md` | Watch allowlisted reg sites; classify changes; produce a Change Digest. Stays inside its allowlist guardrails. |
+| `agents/sub-codebase-impact.md` | Take a requirement (reg obligation OR user story) and find frontend / backend / DB impact in the codebase. |
 
-## NON-NEGOTIABLE GUARDRAILS
-
-These are blocking preconditions. Violating any of them is a skill failure.
-
-1. **Allowlist-only browsing.** You may only call `WebFetch` on URLs whose host matches an entry in `sources.yaml` at this skill's root. Before any fetch, parse the URL host and verify membership. If not in the allowlist, refuse and tell the user the host is out of scope.
-2. **No WebSearch. Ever.** This skill must never call `WebSearch`. Discovery happens only by walking allowlisted index pages.
-3. **No outbound link following.** If an allowlisted page links to a domain outside the allowlist, do not follow it. Report the link to the user instead.
-4. **No silent scope expansion.** If the user says "also check site X", refuse to fetch it. Offer to add it to `sources.yaml` as a separate, explicit step the user must confirm.
-5. **Permission before deep read.** After a scan surfaces candidate changes, you MUST ask the user (via `AskUserQuestion`) which items to fully read. Never fetch full text of all candidates by default.
-6. **Citation-first output.** Every claim about a regulation must cite: source name, URL, section/clause id, fetched-on date. No interpretation without a quote.
-7. **Audit every run.** Append a line to `audit.log` for every scan: timestamp, sources scanned, changes found, user decisions.
-
-If any required configuration is missing (sources, MCP server, jurisdictions), STOP and ask the user to fill the placeholders before proceeding.
-
----
-
-## Required configuration (placeholders — user must fill)
-
-Before first real run, ensure these are populated:
-
-- `sources.yaml` — the allowlist of regulatory sites. Currently contains `<PLACEHOLDER>` entries. The user must replace them with real sites.
-- `config.yaml` — declares the MCP server name that exposes product docs, the jurisdictions in scope, and the user's default product surfaces. Currently contains `<PLACEHOLDER>` values.
-
-On invocation, read both files. If any value is still `<PLACEHOLDER>`, ask the user to provide it via `AskUserQuestion` before continuing.
+The orchestrator owns: reading `config.yaml`, picking the sub-agent, running the gates, and assembling the final artifacts (impact report, spec file).
 
 ---
 
-## The 5-Stage Interactive Flow
+## HARD RULES (blocking — violating any is a skill failure)
 
-Each stage ends with an explicit user gate. Do not advance without confirmation.
+1. **Gate before every LLM push.** Never read a doc, story, or code file into context without first showing the user the candidate list and getting an explicit pick (via `AskUserQuestion`). This applies to MCP resources AND code files.
+2. **Minimal context is non-negotiable.** Push the *smallest* slice that answers the question: a story's summary not its whole history; the matched code hunk not the whole file; one targeted doc not a space. Prefer list → user-pick → read-one over read-many.
+3. **Allowlist-only browsing** (regwatch only). `WebFetch` only on hosts in `sources.yaml`. No `WebSearch`, ever. No following outbound links. Refuse out-of-scope URLs; offer to add them as a separate confirmed step.
+4. **Config-declared code roots only.** The codebase sub-agent greps only inside `code.frontend_paths / backend_paths / db_paths`. No full-repo scan. No stack auto-inference.
+5. **Chat ≤ 150 tokens.** Every conversational/gate reply. Count before sending; trim. Tables over prose. Artifacts written to disk are exempt — they stay concise and free-flowing, never padded.
+6. **Spec file needs explicit consent.** Never write a spec file without a yes at the spec gate.
+7. **Audit every run.** Append one line to `audit.log` per run: timestamp, mode, sources/stories touched, files read, user decisions.
+8. **Don't smother Copilot agents.** Add no ceremony a coding agent would have to wade through. The spec output is a clean handoff, not a process. If a step adds no decision value, skip it.
+9. **Credit report is console-only.** End every run with the Copilot credit block (below). It goes in the chat/console reply ONLY — never inside `specs/`, `plans/`, reports, or any written artifact. Use rates from `config.yaml > copilot_billing`; if the active model's rates are still `<PLACEHOLDER>`, print "rates not configured" rather than inventing numbers.
 
-### Stage 1 — Scope
-
-1. Read `sources.yaml` and `config.yaml`.
-2. Show the user the available sources grouped by domain (banking, payments, AML, securities, conduct, data-protection, crypto).
-3. Ask which domains and which sources to scan this run. Default = all, but require confirmation.
-4. Ask the time window: "changes since last scan" (default), "last 7 days", "last 30 days", or a custom date.
-
-**Gate:** user confirms scope.
-
-### Stage 2 — Scan (lightweight)
-
-For each selected source:
-
-1. `WebFetch` the index/notifications page only. Do not fetch individual circulars yet.
-2. Extract headlines: title, date, reference id, short blurb, link.
-3. Load the prior snapshot from `state/<source-slug>.json` (if it exists). Compare by `(reference id, content hash)`.
-4. Classify each item as: `NEW`, `AMENDED`, `WITHDRAWN`, or `UNCHANGED`.
-5. Produce the **Change Digest** using `templates/change-digest.md`.
-
-**Gate:** show the digest. Ask the user which items they want to deep-read. Options: "all NEW + AMENDED", "high-priority only" (based on keywords in `config.yaml`), "let me pick", "skip this source".
-
-### Stage 3 — Deep Read
-
-For each user-approved item:
-
-1. `WebFetch` the full document.
-2. Extract: scope (entity types covered), obligations (what must be done), effective date, transition period, penalties, withdrawn provisions.
-3. Save a structured summary to `state/<source-slug>/<ref-id>.json` (do not store the full document text — store anchors and quoted obligations only).
-4. Flag ambiguous clauses for human interpretation.
-
-**Gate:** present the extracted obligations table. Ask the user to confirm the interpretation before mapping to products.
-
-### Stage 4 — Impact Analysis
-
-For each confirmed obligation:
-
-1. Derive search keywords (e.g., "customer due diligence", "transaction threshold", "consent capture").
-2. Query the MCP server declared in `config.yaml`:
-   - List available product-doc resources via `ListMcpResourcesTool`.
-   - Read matching resources via `ReadMcpResourceTool`.
-3. For each match, build an **Impact Matrix** row: regulation clause → product surface → current behavior → gap → severity (High / Medium / Low) → confidence.
-4. If no product doc matches, mark as "no surface identified — needs SME review".
-
-**Gate:** present the impact matrix. Ask the user to confirm or correct the mapped surfaces. Severity and confidence can be adjusted here.
-
-### Stage 5 — Remediation Plan
-
-From the confirmed impact matrix, generate a plan using `templates/remediation-plan.md`:
-
-- Items grouped by severity, then by effective date.
-- Each item: Given-When-Then acceptance criteria, owner placeholder, effort estimate (T-shirt size), dependencies, deadline derived from effective date minus a buffer.
-- Highlight critical path (items with the nearest effective date and highest severity).
-
-**Gate:** ask the user to approve. On approval, write the plan to `plans/<YYYY-MM-DD>-remediation.md` and append a final entry to `audit.log`.
+Missing config (`<PLACEHOLDER>` left in `config.yaml` / `sources.yaml`, or no MCP server)? STOP and ask the user to fill it via `AskUserQuestion` before proceeding.
 
 ---
 
-## Interaction style
+## Routing — pick the mode in one read
 
-- Use `AskUserQuestion` at every gate. Never proceed on silence.
-- Default to terse output. Tables > paragraphs.
-- One question per gate where possible; bundle to ≤4 options.
-- If a stage produces zero results, say so plainly and ask whether to widen scope.
+| User intent | Mode | Sub-agent |
+|-------------|------|-----------|
+| "what reg changed", "scan RBI/SEBI/FCA", "new circular", "amended rule" | **Watch** | `sub-regwatch` |
+| "impact of this story", "what code does X touch", "frontend/backend/DB impact", "turn story into spec" | **Code Impact** | `sub-codebase-impact` |
+| "full compliance impact" — a reg change AND its code/DB blast radius | **Chained** | `sub-regwatch` → `sub-codebase-impact` |
+
+Ambiguous? Ask one ≤150-token question: "Watching for reg changes, or tracing a requirement's code impact?"
 
 ---
 
-## File layout (this skill)
+## Flow — Code Impact mode (the new core)
 
+Each step ends at a gate. Never advance on silence.
+
+### 1 — Pick the requirement
+- If a **user story**: list candidate stories from the `provides: [stories]` MCP server(s) — titles + ids only, filtered by `story_filter`. **Gate:** user picks which stories. Only then `ReadMcpResourceTool` the picked ones.
+- If a **reg obligation**: it arrives from `sub-regwatch` (chained mode) — skip the MCP story fetch.
+
+### 2 — Optional supporting docs
+- If the story references behaviour we can't infer, list candidate docs from `provides: [docs]` MCP (use `hints` to narrow). **Gate:** user picks 0–2 docs. Read only those. If none needed, skip — don't fetch "just in case".
+
+### 3 — Hand to `sub-codebase-impact`
+Pass: the chosen requirement (summary + acceptance intent), the declared code roots, and any picked docs. The sub-agent greps inside declared roots, surfaces candidate files, and **gates again** before reading file bodies. It returns a **Code Impact Report** (`templates/code-impact-report.md`): frontend impact, backend impact, DB-change verdict (yes/no + why), open questions.
+
+### 4 — Spec file (consent-gated)
+**Gate:** "Write this up as a spec file? (y/n)". On yes, render `templates/spec-file.md` to `specs/<YYYY-MM-DD>-<slug>.md`. On no, stop after the report.
+
+---
+
+## Flow — Watch mode
+
+Delegate to `agents/sub-regwatch.md`. It runs its own gated Scan → Deep-Read → Digest using `sources.yaml` and returns a Change Digest. In **Chained** mode, each confirmed obligation becomes a requirement fed into Code Impact mode above.
+
+---
+
+## Artifacts
+
+| File | Template | When |
+|------|----------|------|
+| Change Digest | `templates/change-digest.md` | Watch mode, after scan |
+| Impact Matrix | `templates/impact-matrix.md` | reg-obligation → product surface mapping |
+| Remediation Plan | `templates/remediation-plan.md` | Watch mode, on approval → `plans/` |
+| Code Impact Report | `templates/code-impact-report.md` | Code Impact mode, step 3 |
+| Spec File | `templates/spec-file.md` | Code Impact mode, step 4, on consent → `specs/` |
+
+---
+
+## Token discipline (restate — it's the point of this skill)
+
+- List-then-read. Never read what you can list. Never read all when the user can pick.
+- Quote the operative clause / the matched hunk — not the document, not the file.
+- Snapshots and reports store anchors + quotes, not full text.
+- Big watch scans (>5 sources): spawn one sub-agent per source group; each returns only digest rows.
+- Every conversational turn ≤ 150 tokens. Artifacts: concise, no filler.
+
+---
+
+## Copilot credit report (console-only — every run)
+
+Print this block **once per run**, at the end, in the chat/console reply ONLY — even for chained runs that invoked sub-agents. Sub-agents never print it; the orchestrator aggregates the whole run's token flow (its own + every sub-agent call) into one total. Never write it into a spec, report, plan, or any file (hard rule #9). Show the **active model only** (from `config.yaml > copilot_billing.active_model`).
+
+Formula (rates per 1M tokens, from `copilot_billing.models.<active_model>`):
 ```
-regwatch-fintech/
-  SKILL.md                    # this file
-  sources.yaml                # allowlist (PLACEHOLDER — user fills)
-  config.yaml                 # MCP server + jurisdictions (PLACEHOLDER — user fills)
-  state/                      # snapshots per source (auto-managed)
-  plans/                      # approved remediation plans (auto-written)
-  templates/
-    change-digest.md          # stage 2 output format
-    impact-matrix.md          # stage 4 output format
-    remediation-plan.md       # stage 5 output format
-  audit.log                   # append-only run log
+input_credit  = input_tokens  / 1_000_000 × input_per_1m
+output_credit = output_tokens / 1_000_000 × output_per_1m
+cached_credit = cached_tokens / 1_000_000 × cached_per_1m
+total_credit  = input_credit + output_credit + cached_credit
 ```
+
+Console format:
+```
+─── Copilot credits (console-only · not saved) ───
+Model: <active_model>   | rates verified: <rates_verified_on>
+Input:  <input_tokens>  tok → <input_credit> cr   (×<input_per_1m>/1M)
+Output: <output_tokens> tok → <output_credit> cr  (×<output_per_1m>/1M)
+Cached: <cached_tokens> tok → <cached_credit> cr  (×<cached_per_1m>/1M)
+Total: <total_credit> credits
+```
+If the active model's rates are `<PLACEHOLDER>`: print `Total: rates not configured — fill copilot_billing.models.<model> in config.yaml`.
 
 ---
 
 ## Refusal scripts
 
-- **Out-of-scope URL:** "Host `<host>` is not in sources.yaml. I can't fetch it. Want to add it to the allowlist as a separate step?"
-- **WebSearch request:** "This skill never uses open web search. I can only scan allowlisted regulatory sites. Want to add a source instead?"
-- **Missing config:** "`config.yaml` still has `<PLACEHOLDER>` for `<field>`. I need this before I can run. What value should I use?"
-- **MCP unavailable:** "The MCP server `<name>` declared in config.yaml didn't respond. Stage 4 can't run. Continue with stages 1–3 only, or stop?"
-
----
-
-## Output token discipline
-
-- Never dump full regulatory text into the response. Quote only the operative clause.
-- Snapshots store summaries and quoted obligations, not full documents.
-- For large scans (>5 sources), consider spawning sub-agents (one per source group) to keep the main context lean. Each sub-agent returns only its digest rows.
+- **Out-of-scope URL:** "Host `<host>` isn't in sources.yaml — can't fetch. Add it as a separate step?"
+- **WebSearch request:** "This skill never uses open web search. Add a source instead?"
+- **Missing config:** "`config.yaml` still has `<PLACEHOLDER>` for `<field>`. What value?"
+- **MCP unavailable:** "MCP `<name>` didn't respond. Can't read stories/docs. Proceed with code-only, or stop?"
+- **Read-without-gate temptation:** never. List first, ask, then read.

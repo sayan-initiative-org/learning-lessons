@@ -1,5 +1,5 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { BookOpen, ChevronLeft } from "lucide-react";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 
 const BG = "#0b0d12";
 const PANEL = "#13161f";
@@ -8,10 +8,13 @@ const TEXT = "#e6e7eb";
 const MUTED = "#8a8f9c";
 const ACCENT = "#e8b75d";
 
-export function Layout() {
-  const location = useLocation();
-  const isHome = location.pathname === "/";
+const MENU = [
+  { to: "/tutorials", label: "Tutorials" },
+  { to: "/priorities", label: "Priorities Ledger" },
+  { to: "/research", label: "Research Topics" },
+];
 
+export function Layout() {
   return (
     <div style={{ minHeight: "100vh", background: BG, color: TEXT }}>
       <nav
@@ -25,28 +28,11 @@ export function Layout() {
           height: 52,
           display: "flex",
           alignItems: "center",
-          gap: 16,
+          gap: 24,
         }}
       >
-        {!isHome && (
-          <Link
-            to="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              color: MUTED,
-              textDecoration: "none",
-              fontSize: 13,
-              fontFamily: '"JetBrains Mono", monospace',
-            }}
-          >
-            <ChevronLeft size={14} />
-            All tutorials
-          </Link>
-        )}
         <Link
-          to="/"
+          to="/tutorials"
           style={{
             display: "flex",
             alignItems: "center",
@@ -55,12 +41,33 @@ export function Layout() {
             textDecoration: "none",
             fontFamily: '"Fraunces", serif',
             fontSize: 17,
-            marginLeft: isHome ? 0 : "auto",
           }}
         >
           <BookOpen size={18} strokeWidth={1.5} />
           Learning Lessons
         </Link>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+          {MENU.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              style={({ isActive }) => ({
+                color: isActive ? ACCENT : MUTED,
+                textDecoration: "none",
+                fontFamily: '"Manrope", system-ui, sans-serif',
+                fontSize: 13,
+                fontWeight: 500,
+                padding: "6px 12px",
+                borderRadius: 6,
+                background: isActive ? `${ACCENT}12` : "transparent",
+                transition: "color 0.15s",
+              })}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </div>
       </nav>
       <Outlet />
     </div>

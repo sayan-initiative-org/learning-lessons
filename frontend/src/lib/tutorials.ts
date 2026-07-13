@@ -9,10 +9,27 @@ const tutorialModules = import.meta.glob<{ default: React.ComponentType }>(
 export interface TutorialMeta {
   slug: string;
   title: string;
+  summary: string;
   // path key used for the glob record lookup
   moduleKey: string;
   load: () => Promise<{ default: React.ComponentType }>;
 }
+
+// One-line summaries keyed by slug. Missing entries fall back to a generic line.
+const SUMMARIES: Record<string, string> = {
+  "celeryguide": "Distributed task queues with Celery — workers, brokers, and retries.",
+  "mlengineertransformation": "The path from software engineer to ML engineer, step by step.",
+  "ragtutorial": "Retrieval-augmented generation from first principles.",
+  "sdlc-copilot-mcp-integration": "Wiring an SDLC copilot to tools via the Model Context Protocol.",
+  "sdlccopilotctopresentation": "A CTO-level pitch for an SDLC copilot platform.",
+  "claude-code-mastery-guide": "Getting the most out of Claude Code — workflows and patterns.",
+  "deployment-pipeline-tutorial": "Building a CI/CD deployment pipeline end to end.",
+  "hyde-interactive": "Hypothetical Document Embeddings for better retrieval, interactively.",
+  "mcp-deep-dive-guide": "A deep dive into the Model Context Protocol and its architecture.",
+  "rag-reranking-enterprise-guide": "Enterprise RAG with reranking for higher-precision retrieval.",
+  "sdlc-vector-store-tutorial": "Standing up a vector store for SDLC knowledge and search.",
+  "voice-workshop": "Building voice-driven interfaces — capture, transcribe, respond.",
+};
 
 function slugify(raw: string): string {
   return raw
@@ -45,6 +62,7 @@ export const tutorials: TutorialMeta[] = Object.entries(tutorialModules)
     return {
       slug,
       title: titleify(filename),
+      summary: SUMMARIES[slug] ?? "Interactive walkthrough — open to explore.",
       moduleKey,
       load,
     };

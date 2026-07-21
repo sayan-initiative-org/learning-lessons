@@ -47,7 +47,7 @@ export default function WaveMeter({ score = 0, threshold = 60 }) {
     <figure
       role="img"
       aria-label={`Signal clarity meter — ${label}`}
-      className="border border-[#D9DDD3] bg-[#FDFDFB] p-2"
+      className="border border-[#1f2330] bg-[#13161f] p-2"
     >
       <svg
         viewBox={`0 0 ${W} ${H}`}
@@ -57,7 +57,7 @@ export default function WaveMeter({ score = 0, threshold = 60 }) {
         style={{ display: 'block' }}
       >
         {/* baseline */}
-        <line x1="0" y1={CY} x2={W} y2={CY} stroke="#D9DDD3" strokeWidth="0.5" />
+        <line x1="0" y1={CY} x2={W} y2={CY} stroke="#1f2330" strokeWidth="0.5" />
 
         {/* threshold marker */}
         <line
@@ -65,7 +65,7 @@ export default function WaveMeter({ score = 0, threshold = 60 }) {
           y1="0"
           x2={(threshold / 100) * W}
           y2={H}
-          stroke="#D9DDD3"
+          stroke="#1f2330"
           strokeWidth="0.75"
           strokeDasharray="3 3"
         />

@@ -11,19 +11,19 @@ function PriorityCard({ rank, candidate, closeEntry, onStatusChange, onNoteChang
   const note = closeEntry?.note ?? '';
 
   return (
-    <div className="border border-[#D9DDD3] bg-[#FDFDFB] p-4 mb-3">
+    <div className="border border-[#1f2330] bg-[#13161f] p-4 mb-3">
       <div className="flex items-start gap-3 mb-3">
         <span
-          className="text-xs font-bold text-[#5A665F] mt-0.5 flex-shrink-0 w-5"
+          className="text-xs font-bold text-[#8a8f9c] mt-0.5 flex-shrink-0 w-5"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           [{rank}]
         </span>
         <div className="flex-1">
-          <p className="text-sm font-medium text-[#1A2420]">{candidate?.text}</p>
+          <p className="text-sm font-medium text-[#e6e7eb]">{candidate?.text}</p>
           {candidate?.answers?.pillar && candidate.answers.pillar !== 'none' && (
             <p
-              className="text-[10px] text-[#5A665F] mt-0.5"
+              className="text-[10px] text-[#8a8f9c] mt-0.5"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
               {candidate.answers.pillar}
@@ -44,7 +44,7 @@ function PriorityCard({ rank, candidate, closeEntry, onStatusChange, onNoteChang
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]',
               status === opt.value
                 ? 'text-white border-transparent'
-                : 'bg-[#FDFDFB] border-[#D9DDD3] text-[#5A665F] hover:border-[#5A665F]',
+                : 'bg-[#13161f] border-[#1f2330] text-[#8a8f9c] hover:border-[#8a8f9c]',
             ].join(' ')}
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
@@ -62,9 +62,9 @@ function PriorityCard({ rank, candidate, closeEntry, onStatusChange, onNoteChang
         onChange={e => onNoteChange(e.target.value)}
         placeholder="One-line note (optional)"
         className={[
-          'w-full border border-[#D9DDD3] bg-[#F4F5F1] text-[#1A2420] text-xs p-2',
-          'placeholder:text-[#D9DDD3]',
-          'focus:outline-none focus:border-[#5A665F] focus:ring-1 focus:ring-[#5A665F]',
+          'w-full border border-[#1f2330] bg-[#0b0d12] text-[#e6e7eb] text-xs p-2',
+          'placeholder:text-[#1f2330]',
+          'focus:outline-none focus:border-[#8a8f9c] focus:ring-1 focus:ring-[#8a8f9c]',
         ].join(' ')}
         style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
         aria-label={`Close note for priority ${rank}`}
@@ -84,18 +84,18 @@ export default function FocusPhase({ day, onStatusChange, onNoteChange, onClose 
   return (
     <section className="max-w-[860px] mx-auto px-4 py-6">
       <p
-        className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+        className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         Focus
       </p>
       <h2
-        className="text-lg font-bold text-[#1A2420] mb-1"
+        className="text-lg font-bold text-[#e6e7eb] mb-1"
         style={{ fontFamily: "'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif" }}
       >
         Today's {top3.length} priorities
       </h2>
-      <p className="text-sm text-[#5A665F] mb-5">
+      <p className="text-sm text-[#8a8f9c] mb-5">
         Close honestly — the ledger only works if it's true.
       </p>
 
@@ -122,8 +122,8 @@ export default function FocusPhase({ day, onStatusChange, onNoteChange, onClose 
           'mt-2 px-6 py-2 text-xs font-bold tracking-widest uppercase transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B7A4B]',
           allStatusSet
-            ? 'bg-[#1A2420] text-[#F4F5F1] hover:bg-[#0B7A4B]'
-            : 'bg-[#D9DDD3] text-[#5A665F] cursor-not-allowed',
+            ? 'bg-[#e6e7eb] text-[#0b0d12] hover:bg-[#0B7A4B]'
+            : 'bg-[#1f2330] text-[#8a8f9c] cursor-not-allowed',
         ].join(' ')}
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
@@ -131,7 +131,7 @@ export default function FocusPhase({ day, onStatusChange, onNoteChange, onClose 
       </button>
 
       {!allStatusSet && (
-        <p className="text-xs text-[#5A665F] mt-2">
+        <p className="text-xs text-[#8a8f9c] mt-2">
           Mark a status for each priority to close.
         </p>
       )}

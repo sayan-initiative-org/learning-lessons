@@ -10,7 +10,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Navigate to="/tutorials" replace /> },
+      { index: true, element: <Navigate to="/priorities" replace /> },
       { path: "tutorials", element: <TutorialsPage /> },
       { path: "tutorials/:slug", element: <TutorialPage /> },
       { path: "priorities", element: <PrioritiesLedgerPage /> },

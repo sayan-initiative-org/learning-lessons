@@ -9,8 +9,8 @@ const MUTED = "#8a8f9c";
 const ACCENT = "#e8b75d";
 
 const MENU = [
-  { to: "/tutorials", label: "Tutorials" },
   { to: "/priorities", label: "Priorities Ledger" },
+  { to: "/tutorials", label: "Tutorials" },
   { to: "/research", label: "Research Topics" },
 ];
 
@@ -32,7 +32,7 @@ export function Layout() {
         }}
       >
         <Link
-          to="/tutorials"
+          to="/priorities"
           style={{
             display: "flex",
             alignItems: "center",

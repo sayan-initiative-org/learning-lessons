@@ -27,7 +27,7 @@ export default function InterrogatePhase({ day, config, onAnswer, onFinalize }) 
       {/* Progress */}
       <div className="flex items-center justify-between mb-4">
         <p
-          className="text-[10px] tracking-widest text-[#5A665F] uppercase"
+          className="text-[10px] tracking-widest text-[#8a8f9c] uppercase"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           Interrogation — {doneCount}/{candidates.length} resolved
@@ -45,7 +45,7 @@ export default function InterrogatePhase({ day, config, onAnswer, onFinalize }) 
                     ? '#B96A12'
                     : c.id === current.id
                     ? '#2447D6'
-                    : '#D9DDD3',
+                    : '#1f2330',
               }}
             />
           ))}
@@ -55,12 +55,12 @@ export default function InterrogatePhase({ day, config, onAnswer, onFinalize }) 
       {/* Task text */}
       <div className="border-l-2 border-[#2447D6] pl-4 mb-5">
         <p
-          className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+          className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           Task
         </p>
-        <p className="text-base font-medium text-[#1A2420]">{current.text}</p>
+        <p className="text-base font-medium text-[#e6e7eb]">{current.text}</p>
       </div>
 
       <div className="grid md:grid-cols-[1fr_220px] gap-6">
@@ -89,7 +89,7 @@ export default function InterrogatePhase({ day, config, onAnswer, onFinalize }) 
         <div className="md:pt-0 pt-2">
           <WaveMeter score={current.score ?? 0} threshold={config.threshold} />
           <p
-            className="text-[10px] text-[#5A665F] mt-2 text-center"
+            className="text-[10px] text-[#8a8f9c] mt-2 text-center"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             Threshold: {config.threshold}

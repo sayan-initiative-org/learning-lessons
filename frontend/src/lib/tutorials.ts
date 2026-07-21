@@ -29,6 +29,7 @@ const SUMMARIES: Record<string, string> = {
   "rag-reranking-enterprise-guide": "Enterprise RAG with reranking for higher-precision retrieval.",
   "sdlc-vector-store-tutorial": "Standing up a vector store for SDLC knowledge and search.",
   "voice-workshop": "Building voice-driven interfaces — capture, transcribe, respond.",
+  "kag-knowledge-augmented-generation": "Beyond RAG: knowledge graphs, embeddings, and Ant Group's logical-form KAG framework.",
 };
 
 function slugify(raw: string): string {

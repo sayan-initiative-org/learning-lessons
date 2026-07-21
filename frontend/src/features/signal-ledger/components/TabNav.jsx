@@ -9,7 +9,7 @@ const TABS = [
 export default function TabNav({ active, onChange }) {
   return (
     <nav
-      className="border-b border-[#D9DDD3] bg-[#F4F5F1]"
+      className="border-b border-[#1f2330] bg-[#0b0d12]"
       aria-label="Main navigation"
     >
       <div className="max-w-[860px] mx-auto px-4 flex gap-0">
@@ -22,8 +22,8 @@ export default function TabNav({ active, onChange }) {
               'px-5 py-2.5 text-xs font-bold tracking-widest border-b-2 transition-colors',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6] focus-visible:ring-offset-1',
               active === tab.id
-                ? 'border-[#1A2420] text-[#1A2420]'
-                : 'border-transparent text-[#5A665F] hover:text-[#1A2420] hover:border-[#D9DDD3]',
+                ? 'border-[#e6e7eb] text-[#e6e7eb]'
+                : 'border-transparent text-[#8a8f9c] hover:text-[#e6e7eb] hover:border-[#1f2330]',
             ].join(' ')}
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >

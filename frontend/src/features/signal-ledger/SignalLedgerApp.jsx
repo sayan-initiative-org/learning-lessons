@@ -78,9 +78,9 @@ export default function SignalLedgerApp({ adapter = LocalStorageAdapter }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F5F1] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0b0d12] flex items-center justify-center">
         <p
-          className="text-xs text-[#5A665F] tracking-widest"
+          className="text-xs text-[#8a8f9c] tracking-widest"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           Loading…
@@ -92,7 +92,7 @@ export default function SignalLedgerApp({ adapter = LocalStorageAdapter }) {
   const streak = computeStreak(historyDays);
 
   return (
-    <div className="min-h-screen bg-[#F4F5F1]" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+    <div className="min-h-screen bg-[#0b0d12]" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
       <HeaderBar streak={streak} />
       <TabNav active={activeTab} onChange={setActiveTab} />
 

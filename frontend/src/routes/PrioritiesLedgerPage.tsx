@@ -1,12 +1,5 @@
-import { ClipboardList } from "lucide-react";
-import { PlaceholderPage } from "../components/PlaceholderPage";
+import SignalLedgerApp from "../features/signal-ledger/SignalLedgerApp";
 
 export function PrioritiesLedgerPage() {
-  return (
-    <PlaceholderPage
-      title="Priorities Ledger"
-      subtitle="Today's task list — what to focus on, in priority order"
-      Icon={ClipboardList}
-    />
-  );
+  return <SignalLedgerApp />;
 }

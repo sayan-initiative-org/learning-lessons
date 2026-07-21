@@ -21,19 +21,19 @@ export default function ClosedSummary({ day }) {
   return (
     <section className="max-w-[860px] mx-auto px-4 py-8">
       <p
-        className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+        className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         Day closed {closedAtDisplay ? `at ${closedAtDisplay}` : ''}
       </p>
       <h2
-        className="text-2xl font-bold text-[#1A2420] mb-1"
+        className="text-2xl font-bold text-[#e6e7eb] mb-1"
         style={{ fontFamily: "'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif" }}
       >
         {done}/{top3.length} signals landed
       </h2>
       {noiseCount > 0 && (
-        <p className="text-sm text-[#5A665F] mb-6">
+        <p className="text-sm text-[#8a8f9c] mb-6">
           {noiseCount} noise item{noiseCount !== 1 ? 's' : ''} caught before they cost you focus.
         </p>
       )}
@@ -45,7 +45,7 @@ export default function ClosedSummary({ day }) {
           return (
             <div
               key={c.id}
-              className="flex items-start gap-3 border border-[#D9DDD3] bg-[#FDFDFB] p-3"
+              className="flex items-start gap-3 border border-[#1f2330] bg-[#13161f] p-3"
             >
               <span
                 className="text-lg flex-shrink-0 mt-0.5"
@@ -55,13 +55,13 @@ export default function ClosedSummary({ day }) {
                 {GLYPH[status]}
               </span>
               <div className="flex-1">
-                <p className="text-sm text-[#1A2420]">{c.text}</p>
+                <p className="text-sm text-[#e6e7eb]">{c.text}</p>
                 {entry?.note && (
-                  <p className="text-xs text-[#5A665F] mt-0.5 italic">{entry.note}</p>
+                  <p className="text-xs text-[#8a8f9c] mt-0.5 italic">{entry.note}</p>
                 )}
               </div>
               <span
-                className="text-[10px] text-[#5A665F] flex-shrink-0 mt-0.5"
+                className="text-[10px] text-[#8a8f9c] flex-shrink-0 mt-0.5"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 [{i + 1}]
@@ -71,7 +71,7 @@ export default function ClosedSummary({ day }) {
         })}
       </div>
 
-      <p className="text-xs text-[#5A665F] mt-6 border-t border-[#D9DDD3] pt-4">
+      <p className="text-xs text-[#8a8f9c] mt-6 border-t border-[#1f2330] pt-4">
         Check the Ledger tab to see trends across days.
       </p>
     </section>

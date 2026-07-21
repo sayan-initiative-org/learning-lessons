@@ -24,18 +24,18 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
   return (
     <section className="max-w-[860px] mx-auto px-4 py-6">
       <p
-        className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+        className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         Rank
       </p>
       <h2
-        className="text-lg font-bold text-[#1A2420] mb-1"
+        className="text-lg font-bold text-[#e6e7eb] mb-1"
         style={{ fontFamily: "'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif" }}
       >
         Pick your {maxPick === 1 ? '1 priority' : `top ${maxPick}`}
       </h2>
-      <p className="text-sm text-[#5A665F] mb-5">
+      <p className="text-sm text-[#8a8f9c] mb-5">
         Selection order is priority order. Tap to rank; tap again to remove.
       </p>
 
@@ -53,22 +53,22 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
                 'flex items-center gap-3 border p-3 text-left transition-colors w-full',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]',
                 isSelected
-                  ? 'border-[#0B7A4B] bg-[#FDFDFB]'
-                  : 'border-[#D9DDD3] bg-[#FDFDFB] hover:border-[#5A665F]',
+                  ? 'border-[#0B7A4B] bg-[#13161f]'
+                  : 'border-[#1f2330] bg-[#13161f] hover:border-[#8a8f9c]',
               ].join(' ')}
             >
               <span
                 className="w-6 h-6 flex items-center justify-center border text-xs font-bold flex-shrink-0"
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
-                  borderColor: isSelected ? '#0B7A4B' : '#D9DDD3',
-                  color: isSelected ? '#0B7A4B' : '#D9DDD3',
+                  borderColor: isSelected ? '#0B7A4B' : '#1f2330',
+                  color: isSelected ? '#0B7A4B' : '#1f2330',
                 }}
               >
                 {isSelected ? rank + 1 : '·'}
               </span>
 
-              <span className="flex-1 text-sm text-[#1A2420]">{c.text}</span>
+              <span className="flex-1 text-sm text-[#e6e7eb]">{c.text}</span>
 
               <div className="flex items-center gap-2 flex-shrink-0">
                 {c.defended && (
@@ -81,7 +81,7 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
                 )}
                 {c.answers?.pillar && c.answers.pillar !== 'none' && (
                   <span
-                    className="text-[10px] text-[#5A665F] border border-[#D9DDD3] px-1.5 py-0.5 truncate max-w-[120px]"
+                    className="text-[10px] text-[#8a8f9c] border border-[#1f2330] px-1.5 py-0.5 truncate max-w-[120px]"
                     style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                     title={c.answers.pillar}
                   >
@@ -103,7 +103,7 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
       {noise.length > 0 && (
         <div className="mb-6">
           <p
-            className="text-[10px] tracking-widest text-[#5A665F] mb-2 uppercase"
+            className="text-[10px] tracking-widest text-[#8a8f9c] mb-2 uppercase"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             Noise caught ({noise.length})
@@ -111,7 +111,7 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
           {noise.map(c => (
             <div
               key={c.id}
-              className="text-xs text-[#5A665F] border-b border-[#D9DDD3] py-1.5 flex justify-between"
+              className="text-xs text-[#8a8f9c] border-b border-[#1f2330] py-1.5 flex justify-between"
             >
               <span>{c.text}</span>
               <span
@@ -134,8 +134,8 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
             'px-6 py-2 text-xs font-bold tracking-widest uppercase transition-colors',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B7A4B]',
             selected.length === maxPick
-              ? 'bg-[#1A2420] text-[#F4F5F1] hover:bg-[#0B7A4B]'
-              : 'bg-[#D9DDD3] text-[#5A665F] cursor-not-allowed',
+              ? 'bg-[#e6e7eb] text-[#0b0d12] hover:bg-[#0B7A4B]'
+              : 'bg-[#1f2330] text-[#8a8f9c] cursor-not-allowed',
           ].join(' ')}
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
@@ -145,7 +145,7 @@ export default function RankPhase({ day, config, onLock, onAddMore }) {
         <button
           type="button"
           onClick={onAddMore}
-          className="px-4 py-2 text-xs text-[#5A665F] border border-[#D9DDD3] hover:border-[#5A665F] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]"
+          className="px-4 py-2 text-xs text-[#8a8f9c] border border-[#1f2330] hover:border-[#8a8f9c] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           + Add more tasks

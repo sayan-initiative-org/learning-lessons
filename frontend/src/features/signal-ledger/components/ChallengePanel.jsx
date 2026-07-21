@@ -16,14 +16,14 @@ export default function ChallengePanel({ verdict, onFinalize }) {
   }
 
   return (
-    <div className="border border-[#B96A12] bg-[#FDFDFB] p-4 mt-4">
+    <div className="border border-[#B96A12] bg-[#13161f] p-4 mt-4">
       <p
         className="text-[10px] tracking-widest text-[#B96A12] mb-1 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         {verdict === 'noise' ? 'Noise caught' : 'Weak signal'}
       </p>
-      <p className="text-sm text-[#1A2420] mb-4">
+      <p className="text-sm text-[#e6e7eb] mb-4">
         Which goal does it move this week? Defend it in one sentence, or dispose of it.
         Either way, it goes on record.
       </p>
@@ -37,7 +37,7 @@ export default function ChallengePanel({ verdict, onFinalize }) {
             placeholder="One sentence — what does this move?"
             rows={2}
             className={[
-              'w-full border border-[#D9DDD3] bg-[#F4F5F1] text-[#1A2420] text-sm p-2 mb-2 resize-none',
+              'w-full border border-[#1f2330] bg-[#0b0d12] text-[#e6e7eb] text-sm p-2 mb-2 resize-none',
               'focus:outline-none focus:border-[#0B7A4B] focus:ring-1 focus:ring-[#0B7A4B]',
             ].join(' ')}
             style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
@@ -52,7 +52,7 @@ export default function ChallengePanel({ verdict, onFinalize }) {
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B7A4B]',
                 defense.trim()
                   ? 'bg-[#0B7A4B] text-white hover:bg-[#0a6a40]'
-                  : 'bg-[#D9DDD3] text-[#5A665F] cursor-not-allowed',
+                  : 'bg-[#1f2330] text-[#8a8f9c] cursor-not-allowed',
               ].join(' ')}
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
@@ -61,7 +61,7 @@ export default function ChallengePanel({ verdict, onFinalize }) {
             <button
               type="button"
               onClick={() => setDefending(false)}
-              className="px-3 py-1.5 text-xs text-[#5A665F] border border-[#D9DDD3] hover:border-[#5A665F] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]"
+              className="px-3 py-1.5 text-xs text-[#8a8f9c] border border-[#1f2330] hover:border-[#8a8f9c] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2447D6]"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
               Cancel

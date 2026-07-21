@@ -6,15 +6,15 @@ const DISPOSAL_LABEL = { delegate: 'delegated', defer: 'deferred', drop: 'droppe
 
 function stat(label, value, mono = true) {
   return (
-    <div className="border border-[#D9DDD3] bg-[#FDFDFB] p-4">
+    <div className="border border-[#1f2330] bg-[#13161f] p-4">
       <p
-        className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+        className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         {label}
       </p>
       <p
-        className="text-2xl font-bold text-[#1A2420]"
+        className="text-2xl font-bold text-[#e6e7eb]"
         style={{ fontFamily: mono ? "'IBM Plex Mono', monospace" : undefined }}
       >
         {value}
@@ -77,7 +77,7 @@ export default function LedgerView({ historyDays, onLoad }) {
   if (!historyDays.length) {
     return (
       <section className="max-w-[860px] mx-auto px-4 py-10 text-center">
-        <p className="text-[#5A665F] text-sm">No closed days yet. Start today.</p>
+        <p className="text-[#8a8f9c] text-sm">No closed days yet. Start today.</p>
       </section>
     );
   }
@@ -85,7 +85,7 @@ export default function LedgerView({ historyDays, onLoad }) {
   return (
     <section className="max-w-[860px] mx-auto px-4 py-6">
       <p
-        className="text-[10px] tracking-widest text-[#5A665F] mb-4 uppercase"
+        className="text-[10px] tracking-widest text-[#8a8f9c] mb-4 uppercase"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
       >
         Last {historyDays.length} days
@@ -103,31 +103,31 @@ export default function LedgerView({ historyDays, onLoad }) {
       {pillarEntries.length > 0 && (
         <div className="mb-8">
           <p
-            className="text-[10px] tracking-widest text-[#5A665F] mb-1 uppercase"
+            className="text-[10px] tracking-widest text-[#8a8f9c] mb-1 uppercase"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             Where your top-3 energy went
           </p>
-          <p className="text-xs text-[#5A665F] mb-3 italic">
+          <p className="text-xs text-[#8a8f9c] mb-3 italic">
             A starving pillar here is a strategy problem, not a time problem.
           </p>
           <div className="flex flex-col gap-2">
             {pillarEntries.map(([pillar, count]) => (
               <div key={pillar} className="flex items-center gap-3">
                 <span
-                  className="text-xs text-[#1A2420] w-48 truncate flex-shrink-0"
+                  className="text-xs text-[#e6e7eb] w-48 truncate flex-shrink-0"
                   title={pillar}
                 >
                   {pillar}
                 </span>
-                <div className="flex-1 bg-[#F4F5F1] h-4 relative">
+                <div className="flex-1 bg-[#0b0d12] h-4 relative">
                   <div
                     className="h-4 bg-[#0B7A4B] transition-all"
                     style={{ width: `${(count / maxPillar) * 100}%` }}
                   />
                 </div>
                 <span
-                  className="text-xs text-[#5A665F] w-6 text-right flex-shrink-0"
+                  className="text-xs text-[#8a8f9c] w-6 text-right flex-shrink-0"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
                   {count}
@@ -147,10 +147,10 @@ export default function LedgerView({ historyDays, onLoad }) {
           const isClosed = !!d.closedAt;
 
           return (
-            <div key={d.date} className="border border-[#D9DDD3] bg-[#FDFDFB] p-4">
+            <div key={d.date} className="border border-[#1f2330] bg-[#13161f] p-4">
               <div className="flex items-center justify-between mb-3">
                 <span
-                  className="text-xs font-bold text-[#1A2420]"
+                  className="text-xs font-bold text-[#e6e7eb]"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
                   {d.date}
@@ -175,12 +175,12 @@ export default function LedgerView({ historyDays, onLoad }) {
                   <div key={c.id} className="flex items-start gap-2 mb-1.5">
                     <span
                       className="flex-shrink-0 text-sm mt-0.5"
-                      style={{ color: isClosed ? GLYPH_COLOR[status] : '#D9DDD3' }}
+                      style={{ color: isClosed ? GLYPH_COLOR[status] : '#1f2330' }}
                       aria-label={isClosed ? status : 'pending'}
                     >
                       {isClosed ? GLYPH[status] : '○'}
                     </span>
-                    <span className="text-xs text-[#1A2420] flex-1">{c.text}</span>
+                    <span className="text-xs text-[#e6e7eb] flex-1">{c.text}</span>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {c.defended && (
                         <span
@@ -192,7 +192,7 @@ export default function LedgerView({ historyDays, onLoad }) {
                       )}
                       {c.answers?.pillar && c.answers.pillar !== 'none' && (
                         <span
-                          className="text-[9px] border border-[#D9DDD3] text-[#5A665F] px-1 max-w-[100px] truncate"
+                          className="text-[9px] border border-[#1f2330] text-[#8a8f9c] px-1 max-w-[100px] truncate"
                           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                           title={c.answers.pillar}
                         >
@@ -201,7 +201,7 @@ export default function LedgerView({ historyDays, onLoad }) {
                       )}
                     </div>
                     {entry?.note && (
-                      <p className="text-[10px] text-[#5A665F] ml-5 italic">{entry.note}</p>
+                      <p className="text-[10px] text-[#8a8f9c] ml-5 italic">{entry.note}</p>
                     )}
                   </div>
                 );
@@ -209,7 +209,7 @@ export default function LedgerView({ historyDays, onLoad }) {
 
               {noise.length > 0 && (
                 <p
-                  className="text-[10px] text-[#5A665F] mt-2 border-t border-[#D9DDD3] pt-2"
+                  className="text-[10px] text-[#8a8f9c] mt-2 border-t border-[#1f2330] pt-2"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
                   Noise caught:{' '}

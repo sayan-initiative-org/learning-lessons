@@ -30,6 +30,15 @@ const SUMMARIES: Record<string, string> = {
   "sdlc-vector-store-tutorial": "Standing up a vector store for SDLC knowledge and search.",
   "voice-workshop": "Building voice-driven interfaces — capture, transcribe, respond.",
   "kag-knowledge-augmented-generation": "Beyond RAG: knowledge graphs, embeddings, and Ant Group's logical-form KAG framework.",
+  "finops-ai-cost-strategy": "AI strategy & cost: use-case evaluation, Build-vs-Buy, and the FinOps Framework — grounded in finops.org.",
+  "finops-ai-content-angles": "29 LinkedIn post angles on AI investment, Build-vs-Buy, unit economics & enterprise AI maturity.",
+};
+
+// Display-title overrides keyed by slug, for names titleify() can't produce
+// (e.g. brand casing). Missing entries fall back to titleify(filename).
+const TITLES: Record<string, string> = {
+  "finops-ai-cost-strategy": "AI Strategy, Cost & FinOps",
+  "finops-ai-content-angles": "FinOps for AI — LinkedIn Content Angles",
 };
 
 function slugify(raw: string): string {
@@ -62,7 +71,7 @@ export const tutorials: TutorialMeta[] = Object.entries(tutorialModules)
     }
     return {
       slug,
-      title: titleify(filename),
+      title: TITLES[slug] ?? titleify(filename),
       summary: SUMMARIES[slug] ?? "Interactive walkthrough — open to explore.",
       moduleKey,
       load,

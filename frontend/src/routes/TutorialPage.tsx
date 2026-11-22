@@ -1,5 +1,5 @@
-import React, { Suspense, lazy, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { useLocation, useParams, Link } from "react-router-dom";
 import { findTutorial } from "../lib/tutorials";
 import { AlertTriangle, Loader2 } from "lucide-react";
 
@@ -11,21 +11,34 @@ export function TutorialPage() {
   const { slug } = useParams<{ slug: string }>();
   const meta = slug ? findTutorial(slug) : undefined;
 
-  if (!meta) {
+  // Lazy-load the tutorial component on demand. Memoized because hash links re-render
+  // this route: a new lazy() would re-suspend, collapse the page and lose the scroll.
+  const TutorialComponent = useMemo(() => (meta ? lazy(meta.load) : null), [meta]);
+
+  if (!TutorialComponent) {
     return <NotFound slug={slug} />;
   }
-
-  // Lazy-load the tutorial component on demand
-  const TutorialComponent = lazy(meta.load);
 
   return (
     <Suspense fallback={<LoadingState />}>
       {/* Error boundary wraps the tutorial so a broken tutorial doesn't crash the shell */}
       <TutorialErrorBoundary slug={slug!}>
         <TutorialComponent />
+        <ScrollToHashOnLoad />
       </TutorialErrorBoundary>
     </Suspense>
   );
+}
+
+// The browser can't jump to a #section on page load because the tutorial isn't rendered yet.
+function ScrollToHashOnLoad() {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
+  }, []);
+
+  return null;
 }
 
 // ─── Loading ────────────────────────────────────────────────────────────────

@@ -32,6 +32,7 @@ const SUMMARIES: Record<string, string> = {
   "kag-knowledge-augmented-generation": "Beyond RAG: knowledge graphs, embeddings, and Ant Group's logical-form KAG framework.",
   "finops-ai-cost-strategy": "AI strategy & cost: use-case evaluation, Build-vs-Buy, and the FinOps Framework — grounded in finops.org.",
   "finops-ai-content-angles": "29 LinkedIn post angles on AI investment, Build-vs-Buy, unit economics & enterprise AI maturity.",
+  "cicd-harness-guide": "Deployment config, the config engine, harness engineering, Helm and Kubernetes practice — taught from a real kit, with a failure lab.",
 };
 
 // Display-title overrides keyed by slug, for names titleify() can't produce
@@ -39,6 +40,7 @@ const SUMMARIES: Record<string, string> = {
 const TITLES: Record<string, string> = {
   "finops-ai-cost-strategy": "AI Strategy, Cost & FinOps",
   "finops-ai-content-angles": "FinOps for AI — LinkedIn Content Angles",
+  "cicd-harness-guide": "CI/CD Harness Guide",
 };
 
 function slugify(raw: string): string {

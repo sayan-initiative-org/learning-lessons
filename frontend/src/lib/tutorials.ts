@@ -33,6 +33,8 @@ const SUMMARIES: Record<string, string> = {
   "finops-ai-cost-strategy": "AI strategy & cost: use-case evaluation, Build-vs-Buy, and the FinOps Framework — grounded in finops.org.",
   "finops-ai-content-angles": "29 LinkedIn post angles on AI investment, Build-vs-Buy, unit economics & enterprise AI maturity.",
   "cicd-harness-guide": "Deployment config, the config engine, harness engineering, Helm and Kubernetes practice — taught from a real kit, with a failure lab.",
+  "finops-technology-value": "FinOps Certified: Technology Value prep — 19 lessons, trap questions, scenario calculators, spaced review and a study plan.",
+  "leadership-portfolio-studio": "A 12-week plan to build and publish 6 portfolio pieces and 3 articles — steps, references, research library and publication rules.",
 };
 
 // Display-title overrides keyed by slug, for names titleify() can't produce
@@ -41,6 +43,8 @@ const TITLES: Record<string, string> = {
   "finops-ai-cost-strategy": "AI Strategy, Cost & FinOps",
   "finops-ai-content-angles": "FinOps for AI — LinkedIn Content Angles",
   "cicd-harness-guide": "CI/CD Harness Guide",
+  "finops-technology-value": "FinOps Technology Value: Learning Lessons",
+  "leadership-portfolio-studio": "Leadership Portfolio Studio",
 };
 
 function slugify(raw: string): string {
